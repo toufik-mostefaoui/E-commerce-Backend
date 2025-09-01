@@ -1,0 +1,43 @@
+server:
+  port: 7777
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8888/eureka
+
+spring:
+  application:
+    name: Gatway
+
+
+
+  cloud:
+    gateway:
+      routes:
+        - id: route1
+          predicates:
+            - Path=/ms-products/**
+          filters:
+            - RewritePath=/ms-products/(?<s>.*),/${s}
+          uri: lb://ms-products
+
+        - id: route2
+          predicates:
+            - Path=/ms-auth/**
+          filters:
+            - RewritePath=/ms-auth/(?<s>.*),/${s}
+          uri: lb://ms-auth
+
+        - id: route3
+          predicates:
+            - Path=/ms-shopping-activity/**
+          filters:
+            - RewritePath=/ms-shopping-activity/(?<s>.*),/${s}
+          uri: lb://ms-shopping-activity
+
+
+jwt:
+  secret: ${JWT_SECRET}
